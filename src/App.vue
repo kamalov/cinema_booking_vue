@@ -1,85 +1,88 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { useMainStore } from '@/stores/main.ts'
+const store = useMainStore()
+store.get_movies()
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="sidebar">
+    <img class="logo" src="@/assets/film_white.svg" width="60" height="60" alt="film" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <RouterLink to="/movies" class="menu-item" active-class="active">
+      Фильмы
+    </RouterLink>
+    <RouterLink to="/cinemas" class="menu-item" active-class="active">
+      Кинотеатры
+    </RouterLink>
+    <RouterLink to="/booking" class="menu-item" active-class="active">
+      Мои билеты
+    </RouterLink>
+    <RouterLink to="/login" class="menu-item" active-class="active">
+      Вход
+    </RouterLink>
+  </div>
+  <div class="main-content">
+    <RouterView />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
+<style>
+.main-button {
+  font-family: inherit;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  font-weight: 200;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  background-color: var(--active-color);
+  color: var(--text-color);
+  cursor: pointer;
+  white-space: nowrap;
   border: 0;
+
+  &:active {
+    transform: scale(95%);
+  }
+}
+</style>
+
+<style scoped>
+.main-content {
+  overflow-y: auto;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+  background-color: var(--sidebar-color);
 
   .logo {
-    margin: 0 2rem 0 0;
+    width: 60px;
+    margin-bottom: 100px;
   }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+  .menu-item {
+    margin: 5px;
+    padding: 15px 35px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: var(--caption-font-weight);
+    letter-spacing: 2px;
+    color: var(--text-color);
+    text-decoration: none;
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
+    &.active {
+      background-color: white;
+      color: var(--background-color);
+    }
 
-    padding: 1rem 0;
-    margin-top: 1rem;
+    &:hover {
+      background-color: white;
+      color: var(--background-color);
+    }
   }
 }
 </style>

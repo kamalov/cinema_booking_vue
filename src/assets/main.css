@@ -1,35 +1,44 @@
-@import './base.css';
+:root {
+  --background-color: #0f172b;
+  --text-color: #ffffff;
+  --dimmed-text-color: #90a1b9;
+  --barely-visible-text-color: #1e293d;
+  --active-color: #42b883;
+  --button-text-color: #ffffff;
+  --button-background-color: #42b883;
+  --panel-color: #151f33;
+  --sidebar-color: #121b2f;
+  --caption-font-weight: 300;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.2;
+  font-family: "Oswald", sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--button-background-color);
+}
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  display: grid;
+  grid-template-columns: minmax(150px, 250px) minmax(min-content, 1fr);
+  grid-template-rows: 100vh;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-}
