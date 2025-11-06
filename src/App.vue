@@ -2,14 +2,13 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { useMainStore } from '@/stores/main.ts'
 const store = useMainStore()
-store.get_movies()
+store.load_initial_data()
 </script>
 
 <template>
   <div class="sidebar">
     <img class="logo" src="@/assets/film_white.svg" width="60" height="60" alt="film" />
-
-    <RouterLink to="/movies" class="menu-item" active-class="active">
+    <RouterLink to="/movies" class="menu-item" active-class="active" exact="false">
       Фильмы
     </RouterLink>
     <RouterLink to="/cinemas" class="menu-item" active-class="active">
@@ -23,11 +22,21 @@ store.get_movies()
     </RouterLink>
   </div>
   <div class="main-content">
-    <RouterView />
+    <RouterView v-if="store.data.movies && store.data.cinemas"/>
   </div>
 </template>
 
 <style>
+#app {
+  display: grid;
+  grid-template-columns: minmax(150px, 250px) minmax(min-content, 1fr);
+  grid-template-rows: 100vh;
+}
+
+a {
+  color: var(--button-background-color);
+}
+
 .main-button {
   font-family: inherit;
   font-size: 15px;
