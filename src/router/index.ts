@@ -4,6 +4,7 @@ import CinemasView from '@/views/CinemasView.vue'
 import BookingView from '@/views/BookingView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SessionsByMovieView from '@/views/SessionsByMovieView.vue'
+import SessionView from '@/views/SessionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,9 +18,12 @@ const router = createRouter({
       component: MoviesView,
     },
     {
-      path: '/movies/:movieId',
-      props: true,
+      path: '/movies/:movie_id',
       component: SessionsByMovieView
+    },
+    {
+      path: '/sessions/:session_id',
+      component: SessionView
     },
     {
       path: '/cinemas',

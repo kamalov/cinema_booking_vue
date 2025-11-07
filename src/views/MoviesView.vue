@@ -1,33 +1,18 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { useMainStore } from '@/stores/main.ts'
+import MovieCard from '@/components/MovieCard.vue'
 
-const router = useRouter()
 const store = useMainStore()
-
-function handleMovieClick(movie_id: number) {
-  router.push(`/movies/${movie_id}`)
-}
 </script>
 
 <template>
-  <div v-if="!store.data.movies">loading...</div>
-  <div v-else class="movies">
-    <div v-for="[key, movie] in store.data.movies!" :key="key" class="movie">
-      <img :src="movie.posterImage" :alt="movie.description" :title="movie.description" />
-      <div class="details">
-        <div class="title">{{ movie.title }}</div>
-        <div>Год: {{ movie.year }}</div>
-        <div>Рейтинг IMDB: {{ movie.rating }}</div>
-        <div>
-          Длительность: {{ Math.trunc(movie.lengthMinutes / 60) }}ч {{ movie.lengthMinutes % 60 }}м
-        </div>
-        <div class="description">{{ movie.description }}</div>
-        <div class="show-details">
-          <button class="main-button" @click="handleMovieClick(movie.id)">Посмотреть сеансы</button>
-        </div>
-      </div>
-    </div>
+  <div class="movies">
+    <MovieCard
+      v-for="[key, movie] in store.data.movies!"
+      :key="key"
+      :movie_or_movie_id="movie"
+      :show_details_button="true"
+    />
   </div>
 </template>
 
@@ -39,38 +24,5 @@ function handleMovieClick(movie_id: number) {
   margin-top: 50px;
   margin-bottom: 50px;
   gap: 50px;
-
-  .movie {
-    padding: 20px;
-    min-width: 600px;
-    max-width: 800px;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    background-color: var(--panel-color);
-
-    .details {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin: 0 10px 10px 20px;
-      color: var(--dimmed-text-color);
-
-      .title {
-        font-size: 1.6em;
-        color: var(--text-color);
-        letter-spacing: 1px;
-      }
-
-      .description {
-        color: var(--dimmed-text-color);
-        margin-top: 20px;
-      }
-
-      .show-details {
-        align-self: end;
-        margin-top: auto;
-      }
-    }
-  }
 }
 </style>

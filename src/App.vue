@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { useMainStore } from '@/stores/main.ts'
+import IconFilm from '@/components/icons/IconFilm.vue'
 const store = useMainStore()
 store.load_initial_data()
 </script>
 
 <template>
   <div class="sidebar">
-    <img class="logo" src="@/assets/film_white.svg" width="60" height="60" alt="film" />
+    <IconFilm class="logo"/>
     <RouterLink to="/movies" class="menu-item" active-class="active" exact="false">
       Фильмы
     </RouterLink>
@@ -40,7 +41,7 @@ a {
 .main-button {
   font-family: inherit;
   font-size: 15px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.1em;
   font-weight: 200;
   text-transform: uppercase;
   padding: 10px 20px;
