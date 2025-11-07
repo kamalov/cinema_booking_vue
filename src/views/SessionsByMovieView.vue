@@ -18,23 +18,16 @@ store.get_sessions_by_movie(movie_id)
     loading...
   </div>
   <div v-else class="movie-sessions">
-    <div class="movie-title">{{ movie.title }}</div>
-    <div class="movie-description">
-      <img
-        class="movie-description-image"
-        :src="movie.posterImage"
-        :alt="movie.description"
-        :title="movie.description"
-      />
-      <div class="movie-description-text">
-        <div>{{ movie.description }}</div>
-        <br />
+    <div class="movie">
+      <img :src="movie.posterImage" :alt="movie.description" :title="movie.description" />
+      <div class="details">
+        <div class="title">{{ movie.title }}</div>
         <div>Год: {{ movie.year }}</div>
         <div>
-          Продолжительность: {{ Math.trunc(movie.lengthMinutes / 60) }}ч
-          {{ movie.lengthMinutes % 60 }}м
+          Длительность: {{ Math.trunc(movie.lengthMinutes / 60) }}ч {{ movie.lengthMinutes % 60 }}м
         </div>
-        <div>Рейтинг: {{ movie.rating }}</div>
+        <div>Рейтинг IMDB: {{ movie.rating }}</div>
+        <div class="description">{{ movie.description }}</div>
       </div>
     </div>
 
@@ -52,53 +45,48 @@ store.get_sessions_by_movie(movie_id)
 .movie-sessions {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  justify-items: center;
-  max-width: 800px;
+  place-items: center;
 
-  .movie-title {
-    font-size: 2em;
-  }
+  .movie {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: 20px;
+    min-width: 600px;
+    max-width: 800px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    background-color: var(--panel-color);
 
-  .movie-description {
-    display: flex;
-    gap: 20px;
-
-    .movie-description-text {
+    .details {
       display: flex;
       flex-direction: column;
       gap: 5px;
+      margin: 0 10px 10px 20px;
+      color: var(--dimmed-text-color);
+
+      .title {
+        font-size: 1.6em;
+        color: var(--text-color);
+        letter-spacing: 1px;
+      }
+
+      .description {
+        color: var(--dimmed-text-color);
+        margin-top: 20px;
+      }
+
+      .show-details {
+        align-self: end;
+        margin-top: auto;
+      }
     }
   }
 
   .seances-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 10px;
-    align-items: center;
-
-    /*
-    .seances-grid-row {
-      display: contents;
-
-      .seances-divider {
-        grid-column: 1 / -1;
-        justify-self: stretch;
-        height: 1px;
-        background-color: black;
-      }
-
-      .first {
-        margin-top: 50px;
-      }
-
-      .seance-times {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-    }
-    */
+    grid-template-columns: 1fr auto;
+    min-width: 600px;
+    max-width: 800px;
   }
 }
 </style>

@@ -17,10 +17,11 @@ function handleMovieClick(movie_id: number) {
       <img :src="movie.posterImage" :alt="movie.description" :title="movie.description" />
       <div class="details">
         <div class="title">{{ movie.title }}</div>
+        <div>Год: {{ movie.year }}</div>
+        <div>Рейтинг IMDB: {{ movie.rating }}</div>
         <div>
           Длительность: {{ Math.trunc(movie.lengthMinutes / 60) }}ч {{ movie.lengthMinutes % 60 }}м
         </div>
-        <div>Рейтинг IMDB: {{ movie.rating }}</div>
         <div class="description">{{ movie.description }}</div>
         <div class="show-details">
           <button class="main-button" @click="handleMovieClick(movie.id)">Посмотреть сеансы</button>
@@ -35,9 +36,11 @@ function handleMovieClick(movie_id: number) {
   display: flex;
   flex-direction: column;
   place-items: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  gap: 50px;
 
   .movie {
-    margin-top: 50px;
     padding: 20px;
     min-width: 600px;
     max-width: 800px;
