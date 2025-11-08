@@ -30,10 +30,10 @@ const handleMovieClick = () => router.push(`/movies/${movie.id}`)
       <div>
         Длительность: {{ Math.trunc(movie.lengthMinutes / 60) }}ч {{ movie.lengthMinutes % 60 }}м
       </div>
-      <div class="description">{{ movie.description }}</div>
+      <div class="details-text">{{ movie.description }}</div>
       <button
         v-if="props.show_details_button"
-        class="main-button details-button"
+        class="normal-button details-button"
         @click="handleMovieClick"
       >
         Посмотреть сеансы
@@ -64,7 +64,7 @@ const handleMovieClick = () => router.push(`/movies/${movie.id}`)
       letter-spacing: 1px;
     }
 
-    .description {
+    .details-text {
       color: var(--dimmed-text-color);
       margin-top: 20px;
     }

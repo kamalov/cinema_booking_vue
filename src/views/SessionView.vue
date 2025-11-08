@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import { watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { type ICinema, useMainStore } from '@/stores/main.ts'
 import MovieCard from '@/components/MovieCard.vue'
 import Seat from '@/components/SessionView/Seat.vue'
 
+const router = useRouter();
 const route = useRoute()
 const store = useMainStore()
 
@@ -29,8 +30,9 @@ watchEffect(() => {
   }
 })
 
-const handleBook = () => {
-  store.book_selected_seats();
+const handleBook = async () => {
+  await store.book_selected_seats();
+  router.push(`/booking`)
 }
 </script>
 
@@ -66,7 +68,7 @@ const handleBook = () => {
         />
       </div>
 
-      <button class="main-button book-button" :class="{ visible: store.data.session_info?.selected_seats.size}" @click="handleBook">Забронировать</button>
+      <button class="normal-button book-button" :class="{ visible: store.data.session_info?.selected_seats.size}" @click="handleBook">Забронировать</button>
     </div>
   </div>
 </template>
@@ -92,21 +94,23 @@ const handleBook = () => {
     .seat-number {
       place-self: center;
       margin-bottom: 5px;
-      font-size: 8pt;
+      font-size: 0.8em;
     }
 
     .row-number {
       align-self: center;
       justify-self: left;
-      margin-right: 5px;
+      margin-right: 10px;
       white-space: nowrap;
-      font-size: 8pt;
+      font-size: 0.8em;
     }
 
     .cinema-info {
       grid-column: 2 / -1;
       place-self: center;
-
+      display: flex;
+      flex-direction: column;
+      place-items: center;
       font-size: 1.2em;
       line-height: 1.5em;
       margin-top: 70px;

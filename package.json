@@ -17,6 +17,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@kyvg/vue3-notification": "^3.4.2",
     "dayjs": "^1.11.19",
     "lodash": "^4.17.21",
     "pinia": "^3.0.3",

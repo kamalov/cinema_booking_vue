@@ -1,10 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ref, computed, reactive } from 'vue'
 import { defineStore } from 'pinia'
+import { notify } from "@kyvg/vue3-notification";
 import { groupBy, sortBy } from 'lodash'
 import dayjs from 'dayjs'
 
 /// types
+
+interface ISettings {
+  bookingPaymentTimeSeconds: number
+}
 
 interface IMovie {
   id: number
@@ -66,40 +70,51 @@ interface IBooking {
   isPaid: boolean
   seats: ISeat[]
   bookedAt: string
+  session_start_time: string
 }
 
 interface IMainStoreData {
+  settings: ISettings | null
   movies: Map<number, IMovie> | null
   cinemas: Map<number, ICinema> | null
+  sessions: Map<number, ISession>
   sessions_by_movie: ISessionsByMovie | null
   session_info: ISessionInfo | null
-  bookings: IBooking[] | null
+  my_bookings: IBooking[] | null
+}
+
+interface IFetchResult {
+  message?: string,
+  error?: string
 }
 
 /// store
 
 const useMainStore = defineStore('main', () => {
   const data = reactive<IMainStoreData>({
+    settings: null,
     movies: null,
     cinemas: null,
+    sessions: new Map<number, ISession>(),
     sessions_by_movie: null,
     session_info: null,
-    bookings: null,
+    my_bookings: null,
   })
 
   const token = ref('')
   const user_authorized = computed(() => Boolean(token.value))
 
-  const http_get = async (url: string) => {
+  const http_get = async <T>(url: string): Promise<T> => {
     const request = {
       method: 'GET',
       headers: { Authorization: `Bearer ${token.value}` },
     }
     const response = await fetch(url, request)
-    return await response.json()
+    const result = await response.json()
+    return result as T
   }
 
-  const http_post = async (url: string, params: any) => {
+  const http_post = async <T>(url: string, params: any): Promise<T> => {
     const request = {
       method: 'POST',
       headers: {
@@ -109,7 +124,23 @@ const useMainStore = defineStore('main', () => {
       body: JSON.stringify(params),
     }
     const response = await fetch(url, request)
-    return await response.json()
+    const result = await response.json()
+    return result as T
+  }
+
+  const load_initial_data = async () => {
+    const [settings, movies, cinemas] = await Promise.all([
+      http_get<ISettings>('/api/settings'),
+      http_get<IMovie[]>('/api/movies'),
+      http_get<ICinema[]>('/api/cinemas'),
+    ])
+
+    data.settings = settings
+    data.movies = new Map(movies.map((movie) => [movie.id, movie]))
+    data.cinemas = new Map(cinemas.map((cinema) => [cinema.id, cinema]))
+
+    await register_new_user('test', 'test')
+    await login_user('test', 'test')
   }
 
   const register_new_user = async (username: string, password: string) => {
@@ -117,26 +148,21 @@ const useMainStore = defineStore('main', () => {
   }
 
   const login_user = async (username: string, password: string) => {
-    const response = await http_post('/api/login', { username, password })
+    const response = await http_post<any>('/api/login', { username, password })
     token.value = response.token
-  }
-
-  const load_initial_data = async () => {
-    let movies = (await http_get('/api/movies')) as IMovie[]
-    data.movies = new Map(movies.map((movie) => [movie.id, movie]))
-
-    let cinemas = (await http_get('/api/cinemas')) as ICinema[]
-    data.cinemas = new Map(cinemas.map((cinema) => [cinema.id, cinema]))
-
-    await register_new_user('test', 'test')
-    await login_user('test', 'test')
   }
 
   const get_sessions_by_movie = async (movie_id: number) => {
     data.sessions_by_movie = null
 
     let sessions: ISession[] = await http_get(`/api/movies/${movie_id}/sessions`)
+
+    for (const session of sessions) {
+      data.sessions.set(session.id, session)
+    }
+
     sessions = sortBy(sessions, ['startTime', 'cinema_id'])
+
     let by_date_groups = groupBy(sessions, (session) =>
       dayjs(session.startTime).startOf('day').toISOString(),
     )
@@ -168,16 +194,43 @@ const useMainStore = defineStore('main', () => {
     data.session_info = session_info
   }
 
-  const get_bookings = async () => {
-    data.bookings = (await http_get('/api/me/bookings')) as IBooking[]
-  }
-
   const book_selected_seats = async () => {
     const seats = [...data.session_info!.selected_seats].map((seat_str) => JSON.parse(seat_str))
     await http_post(`/api/movieSessions/${data.session_info!.id}/bookings`, {
       seats,
     })
-    void get_session_info(data.session_info!.id);
+    void get_session_info(data.session_info!.id)
+  }
+
+  const get_my_bookings = async () => {
+    data.my_bookings = null
+    let bookings = (await http_get('/api/me/bookings')) as IBooking[]
+    const session_ids = bookings.map((booking) => booking.movieSessionId)
+    const missing_session_ids = session_ids.filter((session_id) => !data.sessions.has(session_id))
+    if (missing_session_ids.length > 0) {
+      const queries = missing_session_ids.map((session_id) =>
+        http_get<ISessionInfo>(`/api/movieSessions/${session_id}`),
+      )
+      const sessions = await Promise.all(queries)
+      for (const session of sessions) {
+        const { id, movieId, cinemaId, startTime } = session
+        data.sessions.set(session.id, { id, movieId, cinemaId, startTime })
+      }
+    }
+    for (const booking of bookings) {
+      booking.session_start_time = data.sessions!.get(booking.movieSessionId)!.startTime;
+    }
+    bookings = sortBy(bookings, ['session_start_time'])
+    data.my_bookings = bookings
+  }
+
+  const pay_for_booking = async (bookingId: string) => {
+    const result = await http_post<IFetchResult>(`/api/bookings/${bookingId}/payments`, { bookingId });
+    notify({
+      type: 'success',
+      text: result.message,
+    })
+    void get_my_bookings()
   }
 
   return {
@@ -186,9 +239,10 @@ const useMainStore = defineStore('main', () => {
     load_initial_data,
     get_sessions_by_movie,
     get_session_info,
-    get_bookings,
+    get_my_bookings,
     book_selected_seats,
+    pay_for_booking
   }
 })
 
-export { useMainStore, type IMovie, type ISessionsByMovie, type ISessionInfo, type ICinema }
+export { useMainStore, type IMovie, type ISessionsByMovie, type ISessionInfo, type ICinema, type IBooking }

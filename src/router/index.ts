@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MoviesView from '@/views/MoviesView.vue'
 import CinemasView from '@/views/CinemasView.vue'
-import BookingView from '@/views/BookingView.vue'
+import MyBookingsView from '@/views/MyBookingsView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SessionsByMovieView from '@/views/SessionsByMovieView.vue'
 import SessionView from '@/views/SessionView.vue'
@@ -31,7 +31,7 @@ const router = createRouter({
     },
     {
       path: '/booking',
-      component: BookingView,
+      component: MyBookingsView,
     },
     {
       path: '/login',

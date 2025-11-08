@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { useMainStore } from '@/stores/main.ts'
 import IconFilm from '@/components/icons/IconFilm.vue'
+import { Notifications } from '@kyvg/vue3-notification'
+const route = useRoute()
 const store = useMainStore()
 store.load_initial_data()
 </script>
@@ -9,10 +11,10 @@ store.load_initial_data()
 <template>
   <div class="sidebar">
     <IconFilm class="logo"/>
-    <RouterLink to="/movies" class="menu-item" active-class="active" exact="false">
+    <RouterLink to="/movies" class="menu-item" :class="{ active: route.path.startsWith('/movies') }">
       Фильмы
     </RouterLink>
-    <RouterLink to="/cinemas" class="menu-item" active-class="active">
+    <RouterLink to="/cinemas" class="menu-item" :class="{ active: route.path.startsWith('/cinemas') }">
       Кинотеатры
     </RouterLink>
     <RouterLink to="/booking" class="menu-item" active-class="active">
@@ -25,6 +27,7 @@ store.load_initial_data()
   <div class="main-content">
     <RouterView v-if="store.data.movies && store.data.cinemas"/>
   </div>
+  <notifications position="top center" :duration="3000"/>
 </template>
 
 <style>
@@ -38,7 +41,7 @@ a {
   color: var(--button-background-color);
 }
 
-.main-button {
+.normal-button {
   font-family: inherit;
   font-size: 15px;
   letter-spacing: 0.1em;
