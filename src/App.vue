@@ -33,7 +33,7 @@ store.load_initial_data()
 <style>
 #app {
   display: grid;
-  grid-template-columns: minmax(150px, 250px) minmax(min-content, 1fr);
+  grid-template-columns: minmax(min-content, 250px) minmax(min-content, 1fr);
   grid-template-rows: 100vh;
 }
 

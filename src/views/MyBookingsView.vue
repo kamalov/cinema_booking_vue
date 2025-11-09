@@ -4,9 +4,16 @@ import Bookings from '@/components/MyBookingsView/Bookings.vue'
 import { ref, watchEffect, onUnmounted, watch, provide, computed } from 'vue'
 import { partition } from 'lodash'
 import dayjs from 'dayjs'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const store = useMainStore()
-store.get_my_bookings()
+
+if (!store.user_authorized) {
+  router.push('/login')
+} else {
+  store.get_my_bookings()
+}
 
 let unpaid_bookings: IBooking[] = []
 let future_bookings: IBooking[] = []
@@ -45,16 +52,27 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="store.data.my_bookings" class="bookings">
+  <div v-if="store.data.my_bookings?.length" class="bookings">
     <div class="bookings-grid">
       <Bookings v-if="unpaid_bookings.length" :bookings="unpaid_bookings" kind="Неоплаченные" />
       <Bookings v-if="future_bookings.length" :bookings="future_bookings" kind="Будущие" />
       <Bookings v-if="past_bookings.length" :bookings="past_bookings" kind="Прошедшие" />
     </div>
   </div>
+  <div v-else class="empty-bookings">
+    Нет бронирований
+  </div>
 </template>
 
 <style scoped>
+.empty-bookings {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .bookings {
   display: flex;
   flex-direction: column;

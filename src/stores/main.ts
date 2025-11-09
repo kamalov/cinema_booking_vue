@@ -101,13 +101,18 @@ const useMainStore = defineStore('main', () => {
     my_bookings: null,
   })
 
-  const token = ref('')
-  const user_authorized = computed(() => Boolean(token.value))
+  const token_ref = ref('')
+  const user_authorized = computed(() => Boolean(token_ref.value));
+
+  const set_token = (new_token: string) => {
+    localStorage['token'] = new_token
+    token_ref.value = new_token
+  }
 
   const http_get = async <T>(url: string): Promise<T> => {
     const request = {
       method: 'GET',
-      headers: { Authorization: `Bearer ${token.value}` },
+      headers: { Authorization: `Bearer ${token_ref.value}` },
     }
     const response = await fetch(url, request)
     const result = await response.json()
@@ -118,7 +123,7 @@ const useMainStore = defineStore('main', () => {
         type: 'error',
         text: result.message || result.error,
       })
-      return {} as T
+      return null as T
     }
   }
 
@@ -127,7 +132,7 @@ const useMainStore = defineStore('main', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${token_ref.value}`,
       },
       body: JSON.stringify(params),
     }
@@ -140,7 +145,7 @@ const useMainStore = defineStore('main', () => {
         type: 'error',
         text: result.message || result.error,
       })
-      return {} as T
+      return null as T
     }
   }
 
@@ -155,17 +160,25 @@ const useMainStore = defineStore('main', () => {
     data.movies = new Map(movies.map((movie) => [movie.id, movie]))
     data.cinemas = new Map(cinemas.map((cinema) => [cinema.id, cinema]))
 
-    // await register_new_user('test1', 'test1')
-    //await login_user('test1', 'test1')
+    set_token(localStorage['token'] ?? '')
   }
 
   const register_new_user = async (username: string, password: string) => {
-    token.value = await http_post('/api/register', { username, password })
+    const response = await http_post<any>('/api/register', { username, password })
+    if (response) {
+      set_token(response.token)
+    }
   }
 
   const login_user = async (username: string, password: string) => {
     const response = await http_post<any>('/api/login', { username, password })
-    token.value = response.token
+    if (response) {
+      set_token(response.token)
+    }
+  }
+
+  const logout = () => {
+    set_token('')
   }
 
   const get_sessions_by_movie = async (movie_id: number) => {
@@ -221,6 +234,9 @@ const useMainStore = defineStore('main', () => {
   const get_my_bookings = async () => {
     data.my_bookings = null
     let bookings = (await http_get('/api/me/bookings')) as IBooking[]
+    for (const booking of bookings) {
+      booking.seats = sortBy(booking.seats, ['rowNumber', 'seatNumber']);
+    }
     const session_ids = bookings.map((booking) => booking.movieSessionId)
     const missing_session_ids = session_ids.filter((session_id) => !data.sessions.has(session_id))
     if (missing_session_ids.length > 0) {
@@ -258,7 +274,9 @@ const useMainStore = defineStore('main', () => {
     get_my_bookings,
     book_selected_seats,
     pay_for_booking,
-    login_user
+    register_new_user,
+    login_user,
+    logout
   }
 })
 

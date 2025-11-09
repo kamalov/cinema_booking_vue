@@ -1,20 +1,35 @@
 <script setup lang="ts">
 import { useMainStore } from '@/stores/main.ts'
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const store = useMainStore()
 
+// if (store.user_authorized) {
+//   store.logout()
+// }
+
 const username_input_ref = ref<any>(null)
+const mode = ref('register')
+const username = ref('')
+const password = ref('')
 const is_password_valid = ref(true)
+const password_confirmation = ref('')
+const is_login_valid = computed(() => username.value.length >= 8)
+const show_password_confirmation_validation = computed(
+  () =>
+    password.value.length > 0 &&
+    password_confirmation.value.length > 0 &&
+    is_password_valid.value &&
+    password.value !== password_confirmation.value,
+)
 
 onMounted(() => {
   nextTick(() => {
     username_input_ref?.value?.focus()
   })
 })
-
-const username = ref('')
-const password = ref('')
 
 function handle_username_input(event: InputEvent) {
   const value = (event.target as HTMLInputElement).value
@@ -23,21 +38,49 @@ function handle_username_input(event: InputEvent) {
 
 function handle_password_input(event: InputEvent) {
   const value = (event.target as HTMLInputElement).value
-  const has_capital_letter = /[\p{Lu}]/u.test(value);
-  const has_number = /\d/.test(value);
+  const has_capital_letter = /[\p{Lu}]/u.test(value)
+  const has_number = /\d/.test(value)
   const is_valid = value.length >= 8 && has_capital_letter && has_number
-  is_password_valid.value = value.length === 0 || is_valid
+  is_password_valid.value = is_valid
   password.value = value
 }
 
-function handle_submit() {
-  store.login_user(username.value, password.value)
+async function handle_submit_login() {
+  await store.login_user(username.value, password.value)
+  if (store.user_authorized) {
+    void router.push('/movies')
+  }
+}
+
+async function handle_submit_register() {
+  if (
+    is_login_valid.value &&
+    is_password_valid.value &&
+    password.value === password_confirmation.value
+  ) {
+    await store.register_new_user(username.value, password.value)
+    if (store.user_authorized) {
+      void router.push('/movies')
+    }
+  }
+}
+
+function switch_mode() {
+  mode.value = mode.value === 'login' ? 'register' : 'login'
+}
+
+function logout() {
+  store.logout()
 }
 </script>
 
 <template>
+  <div v-if="store.user_authorized" class="logout-view">
+    <button class="simple-button" @click="logout">Выйти</button>
+  </div>
+
   <div v-if="!store.user_authorized" class="login-view">
-    <form class="login-form" @submit.prevent="handle_submit">
+    <form v-if="mode === 'login'" class="login-form" @submit.prevent="handle_submit_login">
       <input
         type="text"
         class="simple-text-input"
@@ -46,38 +89,89 @@ function handle_submit() {
         :value="username"
         @input="handle_username_input"
         autocomplete="username"
-        placeholder="ЛОГИН"
+        placeholder="Логин"
       />
       <div class="validation-text"></div>
-        <input
-          type="password"
-          class="simple-text-input login-text-input"
-          :class="{is_valid: password.length > 0 && is_password_valid}"
-          :value="password"
-          @input="handle_password_input"
-          autocomplete="current-password"
-          placeholder="ПАРОЛЬ"
-        />
-        <div class="validation-text">
-          <span v-show="!is_password_valid">
-            Минимум 8 символов<br>
-            Минимум 1 заглавная буква и 1 цифра
-          </span>
-        </div>
+
+      <input
+        type="password"
+        class="simple-text-input login-text-input"
+        :value="password"
+        @input="handle_password_input"
+        autocomplete="current-password"
+        placeholder="Пароль"
+      />
+      <div class="validation-text"></div>
 
       <button type="submit" class="simple-button login-button">Войти</button>
 
       <div class="or-text">или</div>
-      <div class="switch-mode">зарегистрироваться</div>
+      <div class="switch-mode" @click="switch_mode">зарегистрироваться</div>
+    </form>
+
+    <form v-else class="login-form" @submit.prevent="handle_submit_register">
+      <input
+        type="text"
+        class="simple-text-input"
+        ref="username_input_ref"
+        :value="username"
+        @input="handle_username_input"
+        autocomplete="username"
+        placeholder="Логин"
+      />
+      <div class="validation-text">
+        <span v-show="username.length > 0 && username.length < 8"> Минимум 8 символов </span>
+      </div>
+
+      <input
+        type="password"
+        class="simple-text-input login-text-input"
+        :class="{ is_valid: password.length > 0 && is_password_valid }"
+        :value="password"
+        @input="handle_password_input"
+        autocomplete="current-password"
+        placeholder="Пароль"
+      />
+      <div class="validation-text">
+        <span v-show="password.length > 0 && !is_password_valid">
+          Минимум 8 символов<br />
+          Минимум 1 заглавная буква и 1 цифра
+        </span>
+      </div>
+
+      <input
+        type="password"
+        class="simple-text-input login-text-input"
+        :class="{ is_valid: password.length > 0 && password === password_confirmation }"
+        v-model="password_confirmation"
+        autocomplete="new-password"
+        placeholder="Пароль ещё раз"
+      />
+      <div class="validation-text">
+        <span v-show="show_password_confirmation_validation"> Не совпадает с паролем </span>
+      </div>
+
+      <button type="submit" class="simple-button login-button">Зарегистрироваться</button>
+
+      <div class="or-text">или</div>
+      <div class="switch-mode" @click="switch_mode">войти</div>
     </form>
   </div>
 </template>
 
 <style scoped>
+.logout-view {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .login-view {
   display: flex;
   flex-direction: column;
-  place-items: center;
+  align-items: center;
   margin-top: 80px;
   margin-bottom: 50px;
 
@@ -87,11 +181,19 @@ function handle_submit() {
     place-items: center;
   }
 
+  .simple-text-input::placeholder {
+    text-transform: uppercase;
+  }
+
   .login-text-input {
     display: block;
 
     &.is_valid {
       border-color: var(--active-color);
+    }
+
+    &::placeholder {
+      text-transform: uppercase;
     }
   }
 
@@ -106,7 +208,7 @@ function handle_submit() {
 
   .login-button {
     margin-top: 20px;
-    font-size: 1.4em;
+    font-size: 1.2em;
     min-width: 120px;
   }
 

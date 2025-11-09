@@ -39,8 +39,12 @@ const handleSeatClick = () => {
 </script>
 
 <template>
-  <div :class="{ seat: true, selected: is_selected, booked: is_booked }" @click="handleSeatClick"
-  :title="`Ряд ${row_number}, место ${seat_number}`"/>
+  <div
+    class="seat"
+    :class="{ selected: is_selected, booked: is_booked, nonselectable: !store.user_authorized }"
+    @click="handleSeatClick"
+    :title="`Ряд ${row_number}, место ${seat_number}`"
+  />
 </template>
 
 <style scoped>
@@ -59,6 +63,11 @@ const handleSeatClick = () => {
     cursor: not-allowed;
     background-color: var(--dimmed-text-color);
     border: none;
+  }
+
+  &.nonselectable {
+    pointer-events: none;
+    cursor: not-allowed;
   }
 }
 </style>

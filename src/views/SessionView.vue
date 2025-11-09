@@ -6,7 +6,7 @@ import { type ICinema, useMainStore } from '@/stores/main.ts'
 import MovieCard from '@/components/MovieCard.vue'
 import Seat from '@/components/SessionView/Seat.vue'
 
-const router = useRouter();
+const router = useRouter()
 const route = useRoute()
 const store = useMainStore()
 
@@ -17,22 +17,26 @@ store.get_session_info(session_id)
 let row_count = 0
 let seat_count = 0
 let seat_size = 0
-let cinema: ICinema;
+let cinema: ICinema
 
 watchEffect(() => {
   row_count = store.data.session_info?.seats.rows ?? 0
   seat_count = store.data.session_info?.seats.seatsPerRow ?? 0
   seat_size = Math.min(Math.floor(600 / seat_count), 40)
 
-  let cinemaId = store.data.session_info?.cinemaId;
+  let cinemaId = store.data.session_info?.cinemaId
   if (cinemaId !== undefined) {
     cinema = store.data.cinemas!.get(cinemaId)!
   }
 })
 
 const handleBook = async () => {
-  await store.book_selected_seats();
-  router.push(`/booking`)
+  if (!store.user_authorized) {
+    void router.push(`/login`)
+  } else {
+    await store.book_selected_seats()
+    void router.push(`/booking`)
+  }
 }
 </script>
 
@@ -48,8 +52,10 @@ const handleBook = async () => {
       }"
     >
       <div class="cinema-info">
-        <div>{{cinema.address}}</div>
-        <div>{{ dayjs(store.data.session_info?.startTime).locale('ru').format('HH:mm, D MMMM') }}</div>
+        <div>{{ cinema.address }}</div>
+        <div>
+          {{ dayjs(store.data.session_info?.startTime).locale('ru').format('HH:mm, D MMMM') }}
+        </div>
       </div>
 
       <div class="seats-row">
@@ -68,7 +74,13 @@ const handleBook = async () => {
         />
       </div>
 
-      <button class="simple-button book-button" :class="{ visible: store.data.session_info?.selected_seats.size}" @click="handleBook">Забронировать</button>
+      <button
+        class="simple-button book-button"
+        :class="{ visible: !store.user_authorized || store.data.session_info?.selected_seats.size }"
+        @click="handleBook"
+      >
+        Забронировать
+      </button>
     </div>
   </div>
 </template>
