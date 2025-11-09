@@ -33,7 +33,7 @@ const handleMovieClick = () => router.push(`/movies/${movie.id}`)
       <div class="details-text">{{ movie.description }}</div>
       <button
         v-if="props.show_details_button"
-        class="normal-button details-button"
+        class="simple-button details-button"
         @click="handleMovieClick"
       >
         Посмотреть сеансы

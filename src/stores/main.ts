@@ -111,7 +111,15 @@ const useMainStore = defineStore('main', () => {
     }
     const response = await fetch(url, request)
     const result = await response.json()
-    return result as T
+    if (response.ok) {
+      return result as T
+    } else {
+      notify({
+        type: 'error',
+        text: result.message || result.error,
+      })
+      return {} as T
+    }
   }
 
   const http_post = async <T>(url: string, params: any): Promise<T> => {
@@ -125,7 +133,15 @@ const useMainStore = defineStore('main', () => {
     }
     const response = await fetch(url, request)
     const result = await response.json()
-    return result as T
+    if (response.ok) {
+      return result as T
+    } else {
+      notify({
+        type: 'error',
+        text: result.message || result.error,
+      })
+      return {} as T
+    }
   }
 
   const load_initial_data = async () => {
@@ -139,8 +155,8 @@ const useMainStore = defineStore('main', () => {
     data.movies = new Map(movies.map((movie) => [movie.id, movie]))
     data.cinemas = new Map(cinemas.map((cinema) => [cinema.id, cinema]))
 
-    await register_new_user('test', 'test')
-    await login_user('test', 'test')
+    // await register_new_user('test1', 'test1')
+    //await login_user('test1', 'test1')
   }
 
   const register_new_user = async (username: string, password: string) => {
@@ -241,7 +257,8 @@ const useMainStore = defineStore('main', () => {
     get_session_info,
     get_my_bookings,
     book_selected_seats,
-    pay_for_booking
+    pay_for_booking,
+    login_user
   }
 })
 

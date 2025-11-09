@@ -68,7 +68,7 @@ const handleBook = async () => {
         />
       </div>
 
-      <button class="normal-button book-button" :class="{ visible: store.data.session_info?.selected_seats.size}" @click="handleBook">Забронировать</button>
+      <button class="simple-button book-button" :class="{ visible: store.data.session_info?.selected_seats.size}" @click="handleBook">Забронировать</button>
     </div>
   </div>
 </template>

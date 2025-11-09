@@ -21,13 +21,13 @@ store.load_initial_data()
       Мои билеты
     </RouterLink>
     <RouterLink to="/login" class="menu-item" active-class="active">
-      Вход
+      {{ store.user_authorized ? 'Выход' : 'Вход'}}
     </RouterLink>
   </div>
   <div class="main-content">
     <RouterView v-if="store.data.movies && store.data.cinemas"/>
+    <notifications position="top center" :duration="3000"/>
   </div>
-  <notifications position="top center" :duration="3000"/>
 </template>
 
 <style>
@@ -41,7 +41,7 @@ a {
   color: var(--button-background-color);
 }
 
-.normal-button {
+.simple-button {
   font-family: inherit;
   font-size: 15px;
   letter-spacing: 0.1em;
@@ -58,6 +58,25 @@ a {
     transform: scale(95%);
   }
 }
+
+.simple-text-input {
+  appearance: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 1.2em;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  padding: 15px;
+  min-width: 250px;
+  background-color: var(--panel-color);
+  color: var(--text-color);
+  border: 2px solid var(--dimmed-text-color);
+
+  &::placeholder {
+    color: var(--dimmed-text-color);
+  }
+}
+
 </style>
 
 <style scoped>
