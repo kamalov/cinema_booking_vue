@@ -46,6 +46,18 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'chrome',
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: 'chrome', // Uses your local Chrome installation
+        headless: false,
+        launchOptions: {
+          slowMo: 1000
+        },
+      },
+    },
+
+    {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],

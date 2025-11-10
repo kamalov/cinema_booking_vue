@@ -23,6 +23,7 @@ const handleSessionClick = (session_id: number) => {
       v-for="(session, index) in session.sessions"
       :key="index"
       class="simple-button session-button"
+      data-testid="view session"
       @click="handleSessionClick(session.id)"
     >
       {{ dayjs(session.startTime).format('H:mm') }}

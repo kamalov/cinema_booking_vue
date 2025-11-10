@@ -12,9 +12,11 @@ store.load_initial_data()
 <template>
   <div class="sidebar">
     <IconFilm class="logo" />
+
     <RouterLink
       to="/movies"
       class="menu-item"
+      data-testid="movies router link"
       :class="{ active: route.path.startsWith('/movies') }"
     >
       Фильмы
@@ -27,7 +29,7 @@ store.load_initial_data()
       Кинотеатры
     </RouterLink>
     <RouterLink to="/booking" class="menu-item" active-class="active"> Мои билеты </RouterLink>
-    <RouterLink to="/login" class="menu-item" active-class="active">
+    <RouterLink to="/login" class="menu-item" active-class="active" data-testid="login router link">
       {{ store.user_authorized ? 'Выход' : 'Вход' }}
     </RouterLink>
   </div>

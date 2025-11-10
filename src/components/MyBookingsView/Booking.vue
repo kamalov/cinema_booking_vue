@@ -66,7 +66,9 @@ function pay_for_booking(booking_id: string) {
     </div>
 
     <div class="book-button">
-      <button v-if="can_pay" class="simple-button" @click.stop="pay_for_booking(props.booking.id)">
+      <button v-if="can_pay" class="simple-button" @click.stop="pay_for_booking(props.booking.id)"
+        data-testid="pay button"
+      >
         Оплатить
       </button>
     </div>

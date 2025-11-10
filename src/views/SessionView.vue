@@ -76,6 +76,7 @@ const handleBook = async () => {
 
       <button
         class="simple-button book-button"
+        data-testid="book button"
         :class="{ visible: !store.user_authorized || store.data.session_info?.selected_seats.size }"
         @click="handleBook"
       >

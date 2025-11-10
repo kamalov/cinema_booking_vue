@@ -116,6 +116,7 @@ function logout() {
         ref="username_input_ref"
         autocomplete="username"
         placeholder="Логин"
+        data-testid="username"
         :value="username"
         :class="{ is_valid: username.length >= 8 }"
         @input="handle_username_input"
@@ -129,6 +130,7 @@ function logout() {
         class="simple-text-input login-text-input"
         autocomplete="current-password"
         placeholder="Пароль"
+        data-testid="password"
         :class="{ is_valid: password.length > 0 && is_password_valid }"
         :value="password"
         @input="handle_password_input"
@@ -146,13 +148,16 @@ function logout() {
         :class="{ is_valid: password.length > 0 && password === password_confirmation }"
         v-model="password_confirmation"
         autocomplete="new-password"
+        data-testid="password confirmation"
         placeholder="Пароль ещё раз"
       />
       <div class="validation-text">
         <span v-show="show_password_confirmation_validation">Должен совпадать с паролем</span>
       </div>
 
-      <button type="submit" class="simple-button login-button">Зарегистрироваться</button>
+      <button type="submit" class="simple-button login-button" data-testid="register button">
+        Зарегистрироваться
+      </button>
 
       <div class="or-text">или</div>
       <div class="switch-mode" @click="switch_mode">войти</div>
