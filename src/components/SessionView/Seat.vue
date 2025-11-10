@@ -1,15 +1,14 @@
 <script setup lang="ts">
-// import { useRouter } from 'vue-router'
-import { useMainStore } from '@/stores/main.ts'
 import { computed } from 'vue'
-// import { type IMovie } from '@/stores/main.ts'
-//
+import { useRouter } from 'vue-router'
+import { useMainStore } from '@/stores/main.ts'
+
 const props = defineProps<{
   row_number: number
   seat_number: number
 }>()
-//
-// const router = useRouter();
+
+const router = useRouter();
 const store = useMainStore()
 
 const make_key = () => {
@@ -28,6 +27,10 @@ const is_booked = computed(() => {
 })
 
 const handleSeatClick = () => {
+  if (!store.user_authorized) {
+    router.push('/login')
+  }
+
   const key = make_key()
   const seats = store.data.session_info!.selected_seats
   if (seats.has(key)) {
@@ -41,7 +44,7 @@ const handleSeatClick = () => {
 <template>
   <div
     class="seat"
-    :class="{ selected: is_selected, booked: is_booked, nonselectable: !store.user_authorized }"
+    :class="{ selected: is_selected, booked: is_booked }"
     @click="handleSeatClick"
     :title="`Ряд ${row_number}, место ${seat_number}`"
   />
@@ -63,11 +66,6 @@ const handleSeatClick = () => {
     cursor: not-allowed;
     background-color: var(--dimmed-text-color);
     border: none;
-  }
-
-  &.nonselectable {
-    pointer-events: none;
-    cursor: not-allowed;
   }
 }
 </style>

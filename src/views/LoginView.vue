@@ -114,10 +114,11 @@ function logout() {
         type="text"
         class="simple-text-input"
         ref="username_input_ref"
-        :value="username"
-        @input="handle_username_input"
         autocomplete="username"
         placeholder="Логин"
+        :value="username"
+        :class="{ is_valid: username.length >= 8 }"
+        @input="handle_username_input"
       />
       <div class="validation-text">
         <span v-show="username.length > 0 && username.length < 8"> Минимум 8 символов </span>
@@ -126,11 +127,11 @@ function logout() {
       <input
         type="password"
         class="simple-text-input login-text-input"
+        autocomplete="current-password"
+        placeholder="Пароль"
         :class="{ is_valid: password.length > 0 && is_password_valid }"
         :value="password"
         @input="handle_password_input"
-        autocomplete="current-password"
-        placeholder="Пароль"
       />
       <div class="validation-text">
         <span v-show="password.length > 0 && !is_password_valid">
@@ -148,7 +149,7 @@ function logout() {
         placeholder="Пароль ещё раз"
       />
       <div class="validation-text">
-        <span v-show="show_password_confirmation_validation"> Не совпадает с паролем </span>
+        <span v-show="show_password_confirmation_validation">Должен совпадать с паролем</span>
       </div>
 
       <button type="submit" class="simple-button login-button">Зарегистрироваться</button>
@@ -181,19 +182,25 @@ function logout() {
     place-items: center;
   }
 
-  .simple-text-input::placeholder {
-    text-transform: uppercase;
+  .simple-text-input {
+    &::placeholder{
+      text-transform: uppercase;
+    }
+
+    &.is_valid {
+      border-color: var(--active-color);
+    }
   }
 
   .login-text-input {
     display: block;
 
-    &.is_valid {
-      border-color: var(--active-color);
-    }
-
     &::placeholder {
       text-transform: uppercase;
+    }
+
+    &.is_valid {
+      border-color: var(--active-color);
     }
   }
 
