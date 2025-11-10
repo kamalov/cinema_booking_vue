@@ -44,6 +44,17 @@ interface ISessionsByMovie {
   }>
 }
 
+interface ISessionsByCinema {
+  cinema_id: number
+  sessions: Array<{
+    date: string
+    sessions_by_movie: Array<{
+      movie_id: number
+      sessions: Array<ISession>
+    }>
+  }>
+}
+
 interface ISeat {
   rowNumber: number
   seatNumber: number
@@ -79,6 +90,7 @@ interface IMainStoreData {
   cinemas: Map<number, ICinema> | null
   sessions: Map<number, ISession>
   sessions_by_movie: ISessionsByMovie | null
+  sessions_by_cinema: ISessionsByCinema | null
   session_info: ISessionInfo | null
   my_bookings: IBooking[] | null
 }
@@ -97,6 +109,7 @@ const useMainStore = defineStore('main', () => {
     cinemas: null,
     sessions: new Map<number, ISession>(),
     sessions_by_movie: null,
+    sessions_by_cinema: null,
     session_info: null,
     my_bookings: null,
   })
@@ -190,7 +203,7 @@ const useMainStore = defineStore('main', () => {
       data.sessions.set(session.id, session)
     }
 
-    sessions = sortBy(sessions, ['startTime', 'cinema_id'])
+    sessions = sortBy(sessions, ['startTime', 'cinemaId'])
 
     let by_date_groups = groupBy(sessions, (session) =>
       dayjs(session.startTime).startOf('day').toISOString(),
@@ -211,6 +224,38 @@ const useMainStore = defineStore('main', () => {
     }
 
     data.sessions_by_movie = sessions_by_movie
+  }
+
+  const get_sessions_by_cinema = async (cinema_id: number) => {
+    data.sessions_by_cinema = null
+
+    let sessions: ISession[] = await http_get(`/api/cinemas/${cinema_id}/sessions`)
+
+    for (const session of sessions) {
+      data.sessions.set(session.id, session)
+    }
+
+    sessions = sortBy(sessions, ['startTime', 'movieId'])
+
+    let by_date_groups = groupBy(sessions, (session) =>
+      dayjs(session.startTime).startOf('day').toISOString(),
+    )
+
+    let sessions_by_cinema: ISessionsByCinema = { cinema_id, sessions: [] }
+    for (const [date, sessions] of Object.entries(by_date_groups)) {
+      let seance: ISessionsByCinema['sessions'][number] = { date, sessions_by_movie: [] }
+      const by_movie_groups = groupBy(sessions, (session) => session.movieId)
+      for (let [movie_id, sessions] of Object.entries(by_movie_groups)) {
+        let cinema: (typeof seance)['sessions_by_movie'][number] = {
+          movie_id: Number(movie_id),
+          sessions,
+        }
+        seance.sessions_by_movie.push(cinema)
+      }
+      sessions_by_cinema.sessions.push(seance)
+    }
+
+    data.sessions_by_cinema = sessions_by_cinema
   }
 
   const get_session_info = async (session_id: number) => {
@@ -270,6 +315,7 @@ const useMainStore = defineStore('main', () => {
     data,
     load_initial_data,
     get_sessions_by_movie,
+    get_sessions_by_cinema,
     get_session_info,
     get_my_bookings,
     book_selected_seats,
@@ -280,4 +326,4 @@ const useMainStore = defineStore('main', () => {
   }
 })
 
-export { useMainStore, type IMovie, type ISessionsByMovie, type ISessionInfo, type ICinema, type IBooking }
+export { useMainStore, type IMovie, type ISessionsByMovie, type ISessionInfo, type ICinema, type IBooking, type ISessionsByCinema }
