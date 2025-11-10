@@ -11,6 +11,6 @@ npm run dev
 
 #### Тест (только на свежем бэке)
 ```sh
-  npm run test:e2e
+npm run test:e2e
 ```
 
