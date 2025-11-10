@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import { type ISessionsByCinema } from '@/stores/main'
-import SessionsByCinemas from '@/components/SessionsByMovieView/SessionsByCinemas.vue'
 import SessionsByMovies from '@/components/SessionsByCinemaView/SessionsByMovies.vue'
+import { type ISessionsByCinema } from '@/stores/main'
 
 defineProps<{ session: ISessionsByCinema['sessions'][number] }>()
 </script>

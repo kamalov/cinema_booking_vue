@@ -8,7 +8,7 @@ const props = defineProps<{
   seat_number: number
 }>()
 
-const router = useRouter();
+const router = useRouter()
 const store = useMainStore()
 
 const make_key = () => {

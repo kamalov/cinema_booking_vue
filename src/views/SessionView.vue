@@ -2,9 +2,9 @@
 import dayjs from 'dayjs'
 import { watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { type ICinema, useMainStore } from '@/stores/main.ts'
 import MovieCard from '@/components/MovieCard.vue'
 import Seat from '@/components/SessionView/Seat.vue'
+import { type ICinema, useMainStore } from '@/stores/main.ts'
 
 const router = useRouter()
 const route = useRoute()

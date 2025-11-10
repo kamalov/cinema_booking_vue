@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@tsconfig/node22": "^22.0.2",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22.18.11",

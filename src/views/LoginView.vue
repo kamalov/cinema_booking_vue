@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useMainStore } from '@/stores/main.ts'
-import { ref, onMounted, nextTick, computed } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useMainStore } from '@/stores/main.ts'
 
 const router = useRouter()
 const store = useMainStore()
@@ -183,7 +183,7 @@ function logout() {
   }
 
   .simple-text-input {
-    &::placeholder{
+    &::placeholder {
       text-transform: uppercase;
     }
 

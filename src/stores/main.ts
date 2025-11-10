@@ -1,8 +1,8 @@
-import { ref, computed, reactive } from 'vue'
-import { defineStore } from 'pinia'
-import { notify } from "@kyvg/vue3-notification";
-import { groupBy, sortBy } from 'lodash'
 import dayjs from 'dayjs'
+import { groupBy, sortBy } from 'lodash'
+import { defineStore } from 'pinia'
+import { computed, reactive, ref } from 'vue'
+import { notify } from '@kyvg/vue3-notification'
 
 /// types
 
@@ -96,7 +96,7 @@ interface IMainStoreData {
 }
 
 interface IFetchResult {
-  message?: string,
+  message?: string
   error?: string
 }
 
@@ -115,7 +115,7 @@ const useMainStore = defineStore('main', () => {
   })
 
   const token_ref = ref('')
-  const user_authorized = computed(() => Boolean(token_ref.value));
+  const user_authorized = computed(() => Boolean(token_ref.value))
 
   const set_token = (new_token: string) => {
     localStorage['token'] = new_token
@@ -280,7 +280,7 @@ const useMainStore = defineStore('main', () => {
     data.my_bookings = null
     let bookings = (await http_get('/api/me/bookings')) as IBooking[]
     for (const booking of bookings) {
-      booking.seats = sortBy(booking.seats, ['rowNumber', 'seatNumber']);
+      booking.seats = sortBy(booking.seats, ['rowNumber', 'seatNumber'])
     }
     const session_ids = bookings.map((booking) => booking.movieSessionId)
     const missing_session_ids = session_ids.filter((session_id) => !data.sessions.has(session_id))
@@ -295,14 +295,16 @@ const useMainStore = defineStore('main', () => {
       }
     }
     for (const booking of bookings) {
-      booking.session_start_time = data.sessions!.get(booking.movieSessionId)!.startTime;
+      booking.session_start_time = data.sessions!.get(booking.movieSessionId)!.startTime
     }
     bookings = sortBy(bookings, ['session_start_time'])
     data.my_bookings = bookings
   }
 
   const pay_for_booking = async (bookingId: string) => {
-    const result = await http_post<IFetchResult>(`/api/bookings/${bookingId}/payments`, { bookingId });
+    const result = await http_post<IFetchResult>(`/api/bookings/${bookingId}/payments`, {
+      bookingId,
+    })
     notify({
       type: 'success',
       text: result.message,
@@ -322,8 +324,16 @@ const useMainStore = defineStore('main', () => {
     pay_for_booking,
     register_new_user,
     login_user,
-    logout
+    logout,
   }
 })
 
-export { useMainStore, type IMovie, type ISessionsByMovie, type ISessionInfo, type ICinema, type IBooking, type ISessionsByCinema }
+export {
+  useMainStore,
+  type IBooking,
+  type ICinema,
+  type IMovie,
+  type ISessionInfo,
+  type ISessionsByCinema,
+  type ISessionsByMovie,
+}

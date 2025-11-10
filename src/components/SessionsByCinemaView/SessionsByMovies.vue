@@ -18,7 +18,12 @@ const handleSessionClick = (session_id: number) => {
 
 <template>
   <div class="movie">
-    <img class="movie-image" :src="movie.posterImage" :alt="movie.description" :title="movie.description" />
+    <img
+      class="movie-image"
+      :src="movie.posterImage"
+      :alt="movie.description"
+      :title="movie.description"
+    />
     {{ movie.title }}
   </div>
   <div class="seance-times">

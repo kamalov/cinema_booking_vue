@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { type IBooking } from '@/stores/main.ts'
 import Booking from '@/components/MyBookingsView/Booking.vue'
+import { type IBooking } from '@/stores/main.ts'
 
 const props = defineProps<{
   kind: string
   bookings: IBooking[]
 }>()
-
 </script>
 
 <template>
   <div class="booking-kind">{{ props.kind }}</div>
   <div class="bookings-subgrid">
-    <Booking v-for="booking in props.bookings" :key="booking.id" :booking="booking"/>
+    <Booking v-for="booking in props.bookings" :key="booking.id" :booking="booking" />
   </div>
 </template>
 

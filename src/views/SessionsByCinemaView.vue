@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { useMainStore } from '@/stores/main.ts'
-import MovieSessions from '@/components/SessionsByMovieView/MovieSessions.vue'
-import MovieCard from '@/components/MovieCard.vue'
 import CinemaSessions from '@/components/SessionsByCinemaView/CinemaSessions.vue'
+import { useMainStore } from '@/stores/main.ts'
 
 const route = useRoute()
 const store = useMainStore()
@@ -16,8 +14,8 @@ store.get_sessions_by_cinema(cinema_id)
   <div v-if="!store.data.sessions_by_cinema">loading...</div>
   <div v-else class="cinema-sessions">
     <div class="cinema">
-      <div class="cinema-name">Кинотеатр {{cinema.name}}</div>
-      <div class="cinema-address">{{cinema.address}}</div>
+      <div class="cinema-name">Кинотеатр {{ cinema.name }}</div>
+      <div class="cinema-address">{{ cinema.address }}</div>
     </div>
     <div class="sessions-grid">
       <CinemaSessions
@@ -27,7 +25,7 @@ store.get_sessions_by_cinema(cinema_id)
       />
     </div>
     <pre>
-      {{store.data.sessions_by_cinema}}
+      {{ store.data.sessions_by_cinema }}
     </pre>
   </div>
 </template>

@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import { useMainStore } from '@/stores/main.ts'
 
-const router = useRouter();
+const router = useRouter()
 const store = useMainStore()
 
 function goto_cinema(cinema_id: number) {
@@ -13,13 +13,9 @@ function goto_cinema(cinema_id: number) {
 <template>
   <div class="cinemas">
     <div class="cinemas-grid">
-      <div
-        v-for="[key, cinema] in store.data.cinemas!"
-        :key="key"
-        class="cinemas-grid-row"
-      >
-        <div>{{cinema.name}}</div>
-        <div>{{cinema.address}}</div>
+      <div v-for="[key, cinema] in store.data.cinemas!" :key="key" class="cinemas-grid-row">
+        <div>{{ cinema.name }}</div>
+        <div>{{ cinema.address }}</div>
         <div>
           <button class="simple-button" @click="goto_cinema(cinema.id)">Сеансы</button>
         </div>
@@ -36,7 +32,7 @@ function goto_cinema(cinema_id: number) {
   margin-top: 50px;
   margin-bottom: 50px;
 
-  .cinemas-grid{
+  .cinemas-grid {
     display: grid;
     grid-template-columns: 1fr 1.5fr auto;
     min-width: 600px;

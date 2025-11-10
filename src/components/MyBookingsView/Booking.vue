@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { inject, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { type IBooking, useMainStore } from '@/stores/main.ts'
-import { inject, ref, watch } from 'vue'
 
 const props = defineProps<{
   booking: IBooking

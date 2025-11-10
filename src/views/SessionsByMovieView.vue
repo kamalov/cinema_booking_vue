@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { useMainStore } from '@/stores/main.ts'
-import MovieSessions from '@/components/SessionsByMovieView/MovieSessions.vue'
 import MovieCard from '@/components/MovieCard.vue'
+import MovieSessions from '@/components/SessionsByMovieView/MovieSessions.vue'
+import { useMainStore } from '@/stores/main.ts'
 
 const route = useRoute()
 const store = useMainStore()

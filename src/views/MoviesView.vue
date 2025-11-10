@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useMainStore } from '@/stores/main.ts'
 import MovieCard from '@/components/MovieCard.vue'
+import { useMainStore } from '@/stores/main.ts'
 
 const store = useMainStore()
 </script>

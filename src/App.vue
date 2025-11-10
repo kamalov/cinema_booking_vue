@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { useMainStore } from '@/stores/main.ts'
 import IconFilm from '@/components/icons/IconFilm.vue'
+import { useMainStore } from '@/stores/main.ts'
 import { Notifications } from '@kyvg/vue3-notification'
+
 const route = useRoute()
 const store = useMainStore()
 store.load_initial_data()
@@ -10,23 +11,29 @@ store.load_initial_data()
 
 <template>
   <div class="sidebar">
-    <IconFilm class="logo"/>
-    <RouterLink to="/movies" class="menu-item" :class="{ active: route.path.startsWith('/movies') }">
+    <IconFilm class="logo" />
+    <RouterLink
+      to="/movies"
+      class="menu-item"
+      :class="{ active: route.path.startsWith('/movies') }"
+    >
       Фильмы
     </RouterLink>
-    <RouterLink to="/cinemas" class="menu-item" :class="{ active: route.path.startsWith('/cinemas') }">
+    <RouterLink
+      to="/cinemas"
+      class="menu-item"
+      :class="{ active: route.path.startsWith('/cinemas') }"
+    >
       Кинотеатры
     </RouterLink>
-    <RouterLink to="/booking" class="menu-item" active-class="active">
-      Мои билеты
-    </RouterLink>
+    <RouterLink to="/booking" class="menu-item" active-class="active"> Мои билеты </RouterLink>
     <RouterLink to="/login" class="menu-item" active-class="active">
-      {{ store.user_authorized ? 'Выход' : 'Вход'}}
+      {{ store.user_authorized ? 'Выход' : 'Вход' }}
     </RouterLink>
   </div>
   <div class="main-content">
-    <RouterView v-if="store.data.movies && store.data.cinemas"/>
-    <notifications position="top center" :duration="3000"/>
+    <RouterView v-if="store.data.movies && store.data.cinemas" />
+    <notifications position="top center" :duration="3000" />
   </div>
 </template>
 
@@ -76,7 +83,6 @@ a {
     color: var(--dimmed-text-color);
   }
 }
-
 </style>
 
 <style scoped>

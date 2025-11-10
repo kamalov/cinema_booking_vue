@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { type IBooking, useMainStore } from '@/stores/main.ts'
-import Bookings from '@/components/MyBookingsView/Bookings.vue'
-import { ref, watchEffect, onUnmounted, watch, provide, computed } from 'vue'
-import { partition } from 'lodash'
 import dayjs from 'dayjs'
+import { partition } from 'lodash'
+import { onUnmounted, provide, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
+import Bookings from '@/components/MyBookingsView/Bookings.vue'
+import { type IBooking, useMainStore } from '@/stores/main.ts'
 
 const router = useRouter()
 const store = useMainStore()
@@ -59,9 +59,7 @@ onUnmounted(() => {
       <Bookings v-if="past_bookings.length" :bookings="past_bookings" kind="Прошедшие" />
     </div>
   </div>
-  <div v-else class="empty-bookings">
-    Нет бронирований
-  </div>
+  <div v-else class="empty-bookings">Нет бронирований</div>
 </template>
 
 <style scoped>
